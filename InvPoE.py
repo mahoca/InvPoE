@@ -132,9 +132,9 @@ def nuevo_parser(por_linea):
     # en principio puede ser valido, pero deja bastante basura en las lineas
 
     for linea in por_linea:
-        cadena_patron = patron.search(linea)
+        cadena_patron = patron.findall(linea)
         if cadena_patron:
-            print(cadena_patron.group())
+            print(cadena_patron)
 
 
     return
