@@ -88,7 +88,7 @@ def abrir_web(documento):
     return instrucciones
 
 def guardar_archivo_bruto(documento, informacion):
-    # guardo el archivo en bruto con la informacion que sale de abrir_archivo
+    # guardo el archivo en bruto con la informacion que sale de abrir_web
 
    with open(documento,mode='w') as archivo:
        for i in informacion:
