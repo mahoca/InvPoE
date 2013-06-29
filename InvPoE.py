@@ -13,6 +13,8 @@ Dweapon = {}
 Darmour = {}
 Djewelry = {}
 
+Dcontrol = {}
+
 #declaro las listas
 
 Currency_list = []
@@ -126,6 +128,7 @@ def nuevo_parser(por_linea):
     # SEGUNDO el comando '|' opera como un OR lo cual hace que en el momento que detecta uno de
     #   los patrones ya no siga buscando en la linea ( al menos esa es la idea que me ha quedado )
 
+    temp_lista = []
     patron = re.compile('>.+<', re.IGNORECASE)
 
     # este otro patron mas general busca cualquier cosa que este entre los caracteres '>' y '<'
@@ -135,56 +138,57 @@ def nuevo_parser(por_linea):
         cadena_patron = patron.findall(linea)
         #ocurrencia = patron.search(linea)
         if cadena_patron:
-            #print(linea)
-            print(cadena_patron)
+            temp = linea.split('<')
+            temp2 = temp[1].split('>')
+            temp_lista.append(temp2[1])
+            #print(temp2[1])
+    Dcontrol = crea_diccionario(temp_lista)
 
-
-
-
-    return
+    return Dcontrol
 
 
 def crea_diccionario(lista):
 
-    # creo el diccionario de los objetos currency
+    # creo el diccionario de los objetos
+	# la clave sera el nombre, y el valor una lista con las propiedades de los objetos.
+    # la lista que llega aqui no contiene la linea de la url_foto
+    # de momento nos olvidamos de ella.
+    # Hay que intentar añadirle un campo mas con el tipo de objeto ( arco, hacha, etc.)
+    # y el de la foto, esto hay que implementarlo en la funcion nuevo_parser
 
-	# Esta funcion aun esta en FASE EXPERIMENTAL
-	# la clave sera el nombre, y el valor una lista con [url, almacen, descripcion]
+    temporal_list = []
+    Dtemporal = {}
+    control = False
 
-    vacio = []
-    url_imagen = []
-    vacio2 = []
-    nombre = []
-    almacen = []
-    descripcion = []
+    for i in lista:
+        if i != '':
+            control = True
+            if control == True:
+                temporal_list.append(i)
+                #print(temporal_list)
+        else:
+            if len(temporal_list)>0:
+                control = False
+                clave = temporal_list[0]
+                valor = temporal_list[1:]
+                Dtemporal[clave] = valor
+                #print(Dtemporal)
+                temporal_list = []
 
 
-    # el reto de esta funcion es buscar la forma de eliminar el 6 del range del for
-    # y calcular el numero correcto dependiendo del archivo que se abra
 
-    for i in range(0, len(lista), 6):
+    print("Hay ", len(Dtemporal), " objetos")
 
-        vacio.append(lista[i])
-        url_imagen.append(lista[i + 1])
-        vacio2.append(lista[i + 2])
-        nombre.append(lista[i + 3])
-        almacen.append(lista[i + 4])
-        descripcion.append(lista[i + 5])
+    return Dtemporal
 
-    print(len(nombre))
-    for i in range(len(nombre)):
-        clave = nombre[i]
-        valor = [url_imagen[i], almacen[i], descripcion[i]]
-        Dcurrency[clave] = valor
-
-    for i in sorted(set(Dcurrency)):
+def imprime_dic(diccionario):
+    for i in set(diccionario):
         print('*'*10, i)
-        for a in range(len(Dcurrency[i])):
-            print(Dcurrency[i][a])
+        for a in range(len(diccionario[i])):
+            print(diccionario[i][a])
         print('*'*40)
 
-    print("Hay ", len(Dcurrency), " objetos tipo Currency")
-
+    return
 
 def main():
 
@@ -205,32 +209,31 @@ def main():
     Currency_list = abrir_web(poeruta1)
     print ("numero de lineas leidas ", len(Currency_list))
     guardar_archivo_bruto(myruta1, Currency_list)
-    #nuevo_parser(Currency_list)
-
-    # VOY A TRABAJAR CON EL ARCHIVO WEAPONS
-    # CONTIENE VARIAS TABLAS, LOS OBJETOS POSEEN DIFERENTE NUMERO DE PROPIEDADES
-    # DIFERENTE QUIERE DECIR QUE HAY OBJETOS QUE CARECEN DE CIERTAS PROPIEDADES
-    # NO QUE SU VALOR SEA 0
+    Dcurrency = nuevo_parser(Currency_list)
+    imprime_dic(Dcurrency)
 
     Weapons_list = abrir_web(poeruta2)
     print ("numero de lineas leidas ", len(Weapons_list))
     guardar_archivo_bruto(myruta2, Weapons_list)
-    nuevo_parser(Weapons_list)
+    Dweapons = nuevo_parser(Weapons_list)
+    imprime_dic(Dweapons)
+
 
     Armour_list = abrir_web(poeruta3)
     print ("numero de lineas leidas ", len(Armour_list))
     guardar_archivo_bruto(myruta3, Armour_list)
-    #nuevo_parser(Armour_list)
+    Darmour = nuevo_parser(Armour_list)
+    imprime_dic(Darmour)
 
     Jewelry_list = abrir_web(poeruta4)
     print ("numero de lineas leidas ", len(Jewelry_list))
     guardar_archivo_bruto(myruta4, Jewelry_list)
-    #nuevo_parser(Jewelry_list)
+    Djewelry = nuevo_parser(Jewelry_list)
+    imprime_dic(Djewelry)
 
-    # parser(instrucciones)
-    # guardar_archivo_bruto(ruta, nueva_lista)
-    # crea_diccionario(nueva_lista)
-    # guardar_diccionario(ruta, Dcurrency)
-	
+    # parece que funciona todo excepto el diccionario Dcurrency que no se crea
+
+    return
+
 main()
 
