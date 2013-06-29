@@ -133,8 +133,12 @@ def nuevo_parser(por_linea):
 
     for linea in por_linea:
         cadena_patron = patron.findall(linea)
+        #ocurrencia = patron.search(linea)
         if cadena_patron:
+            #print(linea)
             print(cadena_patron)
+
+
 
 
     return

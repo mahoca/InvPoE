@@ -1,0 +1,75 @@
+	<th class="name"><a class="orderCur" href="/item-data/currency/order-by/name/order/desc">Name</a></th>
+	<th><a href="/item-data/currency/order-by/stack-size/order/asc">Stack Size</a></th>
+	<th><a href="/item-data/currency/order-by/description/order/asc">Description</a></th>
+	<td class="name">Armourer's Scrap</td>
+	<td>40</td>
+	<td>Improves the quality of an armour. Right click this item then left click an armour to apply it. Has greater effect on lower rarity armours. The maximum quality is 20%.</td>
+	<td class="name">Blacksmith's Whetstone</td>
+	<td>20</td>
+	<td>Improves the quality of a weapon. Right click this item then left click a weapon to apply it. Has greater effect on lower rarity weapons. The maximum quality is 20%.</td>
+	<td class="name">Blessed Orb</td>
+	<td>20</td>
+	<td>Randomises the numeric values of the implicit properties of an item. Right click this item then left click another item to apply it.</td>
+	<td class="name">Cartographer's Chisel</td>
+	<td>20</td>
+	<td>Improves the quality of a map. Right click this item then left click a map to apply it. Has greater effect on lower rarity maps. The maximum quality is 20%.</td>
+	<td class="name">Chaos Orb</td>
+	<td>10</td>
+	<td>Reforges a rare item with new random properties. Right click this item then left click a rare item to apply it.</td>
+	<td class="name">Chromatic Orb</td>
+	<td>20</td>
+	<td>Reforges the colour of sockets on an item. Right click this item then left click a socketed item to apply it.</td>
+	<td class="name">Divine Orb</td>
+	<td>10</td>
+	<td>Randomises the numeric values of the random properties on an item. Right click this item then left click a magic, rare or unique item to apply it.</td>
+	<td class="name">Eternal Orb</td>
+	<td>10</td>
+	<td>Creates an imprint of an item for later restoration. Right click this item then left click on an item to create an imprint. This imprint can later be used to restore this specific item to that imprinted state.</td>
+	<td class="name">Exalted Orb</td>
+	<td>10</td>
+	<td>Enchants a rare item with a new random property. Right click this item then left click a rare item to apply it. Rare items can have up to six random properties.</td>
+	<td class="name">Gemcutter's Prism</td>
+	<td>20</td>
+	<td>Improves the quality of a gem. Right click this item then left click a gem to apply it. The maximum quality is 20%.</td>
+	<td class="name">Glassblower's Bauble</td>
+	<td>20</td>
+	<td>Improves the quality of a flask. Right click this item then left click a flask to apply it. Has greater effect on lower rarity flasks. The maximum quality is 20%.</td>
+	<td class="name">Jeweller's Orb</td>
+	<td>20</td>
+	<td>Reforges the number of sockets on an item. Right click this item then left click a socketed item to apply it.</td>
+	<td class="name">Mirror of Kalandra</td>
+	<td>10</td>
+	<td>Creates a mirrored copy of an item. Right click this item then left click an equipable non-unique item to apply it. Mirrored copies cannot be modified.</td>
+	<td class="name">Orb of Alchemy</td>
+	<td>10</td>
+	<td>Upgrades a normal item to a rare item. Right click this item then left click a normal item to apply it.</td>
+	<td class="name">Orb of Alteration</td>
+	<td>20</td>
+	<td>Reforges a magic item with new random properties. Right click this item then left click a magic item to apply it.</td>
+	<td class="name">Orb of Augmentation</td>
+	<td>30</td>
+	<td>Enchants a magic item with a new random property. Right click this item then left click a magic item to apply it. Magic items can have up to two random properties.</td>
+	<td class="name">Orb of Chance</td>
+	<td>20</td>
+	<td>Upgrades a normal item to a random rarity. Right click this item then left click a normal item to apply it.</td>
+	<td class="name">Orb of Fusing</td>
+	<td>20</td>
+	<td>Reforges the links between sockets on an item. Right click this item then left click a socketed item to apply it.</td>
+	<td class="name">Orb of Regret</td>
+	<td>40</td>
+	<td>Grants a passive skill refund point. Right click on this item to use it.</td>
+	<td class="name">Orb of Scouring</td>
+	<td>30</td>
+	<td>Removes all properties from an item. Right click this item then left click on a magic or rare item to apply it.</td>
+	<td class="name">Orb of Transmutation</td>
+	<td>40</td>
+	<td>Upgrades a normal item to a magic item. Right click this item then left click a normal item to apply it.</td>
+	<td class="name">Portal Scroll</td>
+	<td>40</td>
+	<td>Creates a portal to town. Right click on this item to use it.</td>
+	<td class="name">Regal Orb</td>
+	<td>10</td>
+	<td>Upgrades a magic item to a rare item. Right click this item then left click a magic item to apply it. Current properties are retained and a new one is added.</td>
+	<td class="name">Scroll of Wisdom</td>
+	<td>40</td>
+	<td>Identifies an item. Right click this item then left click an unidentified item to apply it.</td>
