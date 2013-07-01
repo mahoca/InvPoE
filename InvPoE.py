@@ -1,5 +1,16 @@
 __author__ = 'm3d'
 
+ # RESUMEN
+    # - Pierdo la linea de la url_foto, de momento no importa hasta que implemente la UI
+    # - No se crea el diccionario de los objetos currency
+    # el error de que no cree el diccionario de los objetos currency se debe a que al descomponer el codigo fuente
+    # en los otros 3 tipos de objetos siempre queda una linea vacia entre cada objeto, pero en el
+    # del currency no ocurre asi, y el parser trabaja en funcion de esa linea vacia.
+    # No crea una lista por objeto sino que crea una lista con todos los objetos
+    #  HAY QUE VOLVER A PENSAR EL PARSER.
+    # - Ya que estamos que tal guardar la informacion en una Base de Datos?
+
+
 import os
 import httplib2
 import re
@@ -141,7 +152,7 @@ def nuevo_parser(por_linea):
             temp = linea.split('<')
             temp2 = temp[1].split('>')
             temp_lista.append(temp2[1])
-            #print(temp2[1])
+            print(temp2[1])
     Dcontrol = crea_diccionario(temp_lista)
 
     return Dcontrol
@@ -161,11 +172,11 @@ def crea_diccionario(lista):
     control = False
 
     for i in lista:
-        if i != '':
+        if i != '': # aqui se produce el mal funcionamiento en el diccionario currency
             control = True
             if control == True:
                 temporal_list.append(i)
-                #print(temporal_list)
+                print(temporal_list)
         else:
             if len(temporal_list)>0:
                 control = False
@@ -210,28 +221,27 @@ def main():
     print ("numero de lineas leidas ", len(Currency_list))
     guardar_archivo_bruto(myruta1, Currency_list)
     Dcurrency = nuevo_parser(Currency_list)
-    imprime_dic(Dcurrency)
+    #imprime_dic(Dcurrency)
+
 
     Weapons_list = abrir_web(poeruta2)
     print ("numero de lineas leidas ", len(Weapons_list))
     guardar_archivo_bruto(myruta2, Weapons_list)
     Dweapons = nuevo_parser(Weapons_list)
-    imprime_dic(Dweapons)
+    #imprime_dic(Dweapons)
 
 
     Armour_list = abrir_web(poeruta3)
     print ("numero de lineas leidas ", len(Armour_list))
     guardar_archivo_bruto(myruta3, Armour_list)
     Darmour = nuevo_parser(Armour_list)
-    imprime_dic(Darmour)
+    #imprime_dic(Darmour)
 
     Jewelry_list = abrir_web(poeruta4)
     print ("numero de lineas leidas ", len(Jewelry_list))
     guardar_archivo_bruto(myruta4, Jewelry_list)
     Djewelry = nuevo_parser(Jewelry_list)
-    imprime_dic(Djewelry)
-
-    # parece que funciona todo excepto el diccionario Dcurrency que no se crea
+    #imprime_dic(Djewelry)
 
     return
 
