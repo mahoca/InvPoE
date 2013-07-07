@@ -1,4 +1,7 @@
-__author__ = 'm3d'
+# /usr/bin/env python3.3
+# -*- coding: utf-8 -*-
+
+__author__ = 'mahoca'
 
 """
 :RESUMEN
@@ -9,9 +12,12 @@ __author__ = 'm3d'
 :    Cuando haya separado el objeto con sus propiedades empezare a pensar en como guardarlo en una BD.
 """
 
-import os
+import os, sys
 import httplib2
 import re
+import pickle
+from PyQt5 import QtCore, QtGui
+
 
 a = os.getcwd()
 
@@ -21,8 +27,6 @@ Dcurrency = {}
 Dweapon = {}
 Darmour = {}
 Djewelry = {}
-
-Dcontrol = {}
 
 #declaro las listas
 
@@ -108,16 +112,12 @@ def guardar_archivo_bruto(documento, informacion):
 def guardar_diccionario(documento, informacion):
 
     """
-    :Guardo el diccionarioo creado en un archivo de texto, donde cada linea
-    :corresponde a un objeto con sus propiedades.
-    :ESTA FUNCION NO ESTA EN USO DE MOMENTO.
+    :Guardo el diccionario usando pickle
+    :ESTA FUNCION ESTA EN DESARROLLO DE MOMENTO.
     """
-
-    with open(documento, mode='w') as archivo:
-        for i in informacion:
-            archivo.write(i)
-            for a in range(len(informacion[i])):
-                archivo.write(informacion[i][a])
+    fichero = open(documento,'wb')
+    pickle.dump(informacion,fichero) # protocolo 0 = formato texto
+    fichero.close()
 
     return
 
@@ -131,7 +131,7 @@ def nuevo_parser(por_linea):
     :de las propiedades de los objetos.
     :param por_linea:
     """
-
+    Dcontrol = {}
     temporal_lista1 = [] # lista temporal para la primera limpieza
     temporal_lista2 = [] # lista temporal para la segunda limpieza
     patron1 = re.compile('data-large-image=(.+/>)', re.IGNORECASE)
@@ -141,10 +141,9 @@ def nuevo_parser(por_linea):
     # patron1, para encontrar la linea de la url_foto, y que tambien me va a
     # servir para definir el inicio del objeto
     # patron2, para encontrar las propiedades del objeto
-    # FUNCIONA !!!!!!!!
 
     # PRIMERA LIMPIEZA
-
+    # ULTIMA HORA: parece que hay lineas que no se borran como es debido
     for linea in por_linea:
 
         objeto_cont = False
@@ -200,12 +199,20 @@ def crea_diccionario(lista):
         if cadena_patron:
             control.append(i)
             #print(len(control))
-    intervalo = control[1]-control[0]
+
 
     # USO LA LISTA ANTERIOR PARA DEFINIR QUE LINEAS PERTENECEN A CADA OBJETO Y ASI CREAR EL
     # DICCIONARIO.
 
     for a in range(0,len(control)):
+        if a != len(control)-1:
+            pos_fin = control[a + 1]
+            intervalo = int(pos_fin - control[a])
+        else:
+            intervalo = int(len(lista) - control[a])
+
+        #solo queda borrar los simbolos '<' y '>' de los elementos
+
         for b in range(0,intervalo):
             objeto_temp.append(lista[control[a]+b])
 
@@ -224,17 +231,23 @@ def crea_diccionario(lista):
     return Dtemporal
 
 
-def imprime_dic(diccionario):
+def imprime_dic(documento):
     """
     :Funcion para imprimir el diccionario y comprobar se se creo bien.
+    :ESTA FUNCION ESTA EN DESARROLLO DE MOMENTO.
     :Cuando todo este bien esta funcion no creo que se use.
     """
-    print("ESTE DICCIONARIO TIENE : ", len(diccionario), "OBJETOS")
-    for i in sorted(set(diccionario)):
-        print(i, '*'*15)
-        for a in range(len(diccionario[i])):
-            print(diccionario[i][a])
-        print('*'*40)
+    fichero = open(documento, 'rb')
+    diccionario = pickle.load(fichero)
+    fichero.close()
+    #print("ESTE DICCIONARIO TIENE : ", len(fichero), "OBJETOS")
+    print(diccionario.keys())
+
+    #for i in set(diccionario):
+        #print(i, '*'*15)
+        #for a in range(len(diccionario[i])):
+            #print(diccionario[i][a])
+        #print('*'*40)
 
     return
 
@@ -257,29 +270,40 @@ def main():
 
 
     Weapons_list = abrir_web(poeruta2)
-    print ("numero de lineas leidas ", len(Weapons_list))
-    #guardar_archivo_bruto(myruta2, Weapons_list)
+    #print ("numero de lineas leidas ", len(Weapons_list))
     Dweapons = nuevo_parser(Weapons_list)
-    imprime_dic(Dweapons)
+    guardar_diccionario(myruta2, Dweapons)
+    imprime_dic(myruta2)
 
     #Currency_list = abrir_web(poeruta1)
     #print ("numero de lineas leidas ", len(Currency_list))
-    #guardar_archivo_bruto(myruta1, Currency_list)
     #Dcurrency = nuevo_parser(Currency_list)
-    #imprime_dic(Dcurrency)
+    #guardar_diccionario(myruta1, Dcurrency)
+    #imprime_dic(myruta1)
 
     #Armour_list = abrir_web(poeruta3)
     #print ("numero de lineas leidas ", len(Armour_list))
-    #guardar_archivo_bruto(myruta3, Armour_list)
     #Darmour = nuevo_parser(Armour_list)
-    #imprime_dic(Darmour)
+    #guardar_diccionario(myruta3, Darmour)
+    #imprime_dic(myruta3)
 
     #Jewelry_list = abrir_web(poeruta4)
     #print ("numero de lineas leidas ", len(Jewelry_list))
-    #guardar_archivo_bruto(myruta4, Jewelry_list)
     #Djewelry = nuevo_parser(Jewelry_list)
-    #imprime_dic(Djewelry)
+    #guardar_diccionario(myruta4, Djewelry)
+    #imprime_dic(myruta4)
+
+
 
     return
 
 main()
+app = QtGui.QGuiApplication(sys.argv)
+
+widget = QtGui.QWindow()
+widget.resize(300,300)
+widget.setTitle('InvPoE')
+
+widget.show()
+
+sys.exit(app.exec_())
