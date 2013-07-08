@@ -5,11 +5,12 @@ __author__ = 'mahoca'
 
 """
 :RESUMEN
-:    Estoy rehaciendo el parser de nuevo una vez descubiertos los problemas delanterior codigo.
-:    Ahora al leer el codigo fuente ya se queda con la linea de la url_foto. Solo queda desarrollar
-:    la ultima fase para separar las propiedades del objeto. Me ayudare sabiendo que el objeto siempre
-:    empieza con la linea de la url_foto.
-:    Cuando haya separado el objeto con sus propiedades empezare a pensar en como guardarlo en una BD.
+:    Funcion parser completada, parece que los objetos se crean bien.
+:    Grabacion y lectura del diccionario usando pickle: funcion basica implementada
+:    Probando Pyqt5 para crear forms y visualizar la informacion.
+:    Queda mucho que estudiar asi que va a llevar tiempo.
+:    - Crear UI para visualizar los objetos.
+:    - Estudiar pickle y shelve para implementar mejores rutinas de lectura y grabacion
 """
 
 import os, sys
@@ -47,7 +48,7 @@ linea_final = re.compile('</table>')
 def abrir_web(documento):
 
     """
-    : leemos el codigo fuente de la web usando la libreria http2lib2
+    : lee el codigo fuente de la web usando la libreria http2lib2
     : esta libreria nos carga el codigo fuente de la web en una variable
     : de tipo bytes. Con la funcion bytes.decode obtenemos una variable 'archivo'
     : tipo string con todas las lineas del codigo fuente
@@ -98,9 +99,8 @@ def abrir_web(documento):
 
 def guardar_archivo_bruto(documento, informacion):
     """
-    :Guardo en un archivo de texto la informacion que extraigo con la funcion
-    :abrir_web.
-    :ESTA FUNCION NO ESTA SIENDO USADA DE MOMENTO
+    :Guardo en un archivo de texto la informacion que extraigo con la funcion abrir_web.
+    :ESTA FUNCION NO ESTA SIENDO USADA
     """
     with open(documento, mode='w') as archivo:
         for i in informacion:
@@ -113,10 +113,12 @@ def guardar_diccionario(documento, informacion):
 
     """
     :Guardo el diccionario usando pickle
-    :ESTA FUNCION ESTA EN DESARROLLO DE MOMENTO.
+    :parametros
+    :documento es la ruta del archivo a guardar
+    :informacion es el diccionario que voy a guardar
     """
     fichero = open(documento,'wb')
-    pickle.dump(informacion,fichero) # protocolo 0 = formato texto
+    pickle.dump(informacion,fichero)
     fichero.close()
 
     return
@@ -137,13 +139,14 @@ def nuevo_parser(por_linea):
     patron1 = re.compile('data-large-image=(.+/>)', re.IGNORECASE)
     patron2 = re.compile('>.+?<', re.IGNORECASE)
 
-    # defino 2 patrones:
+    # defino 3 patrones:
     # patron1, para encontrar la linea de la url_foto, y que tambien me va a
     # servir para definir el inicio del objeto
     # patron2, para encontrar las propiedades del objeto
+    # patron3, añadido para eliminar las lineas del menu de las tablas
 
     # PRIMERA LIMPIEZA
-    # ULTIMA HORA: parece que hay lineas que no se borran como es debido
+
     for linea in por_linea:
 
         objeto_cont = False
@@ -162,9 +165,13 @@ def nuevo_parser(por_linea):
     control_foto = False
     control_prop = False
     patron = re.compile('http://', re.IGNORECASE)
+    patron3 = re.compile('href=', re.IGNORECASE)
+
     for linea in temporal_lista1:
+
         cadena_info = str(linea)
-        if len(linea) != 0: # ELIMINA cadena vacia
+        cadena_menu = patron3.findall(cadena_info)
+        if (len(linea) != 0) and not cadena_menu: # ELIMINA cadena vacia y lineas de menu
             cadena_limpi2 = patron.findall(cadena_info)
             if cadena_limpi2 or control_prop:
                 control_foto = True
@@ -173,7 +180,6 @@ def nuevo_parser(por_linea):
             if control_foto:
                     control_prop = True
 
-    #print(temporal_lista2)
     Dcontrol = crea_diccionario(temporal_lista2)
 
     return Dcontrol
@@ -211,49 +217,52 @@ def crea_diccionario(lista):
         else:
             intervalo = int(len(lista) - control[a])
 
-        #solo queda borrar los simbolos '<' y '>' de los elementos
-
         for b in range(0,intervalo):
             objeto_temp.append(lista[control[a]+b])
 
-        clave = str(objeto_temp[1])
+        clave_temp = str(objeto_temp[1])
+        clave = clave_temp[3:-3] # elimina los simbolos de la propiedad nombre
+        objeto_temp.pop(1) # borro la propiedad nombre de la lista de propiedades del objeto
 
-        objeto_temp.pop(1)
         for i in objeto_temp:
-            valor.append(i)
+            valor_temp = str(i)
+            temp1 = valor_temp.replace('<','')
+            temp2 = temp1.replace('>','')
+            temp3 = temp2.replace('/','')
+
+            valor.append(temp3)
 
         Dtemporal[clave] = valor
 
         objeto_temp = []
         valor = []
 
-    #print("Hay ", len(Dtemporal), " objetos")
     return Dtemporal
 
 
 def imprime_dic(documento):
     """
-    :Funcion para imprimir el diccionario y comprobar se se creo bien.
-    :ESTA FUNCION ESTA EN DESARROLLO DE MOMENTO.
-    :Cuando todo este bien esta funcion no creo que se use.
+    :Funcion para imprimir el diccionario y comprobar se creo bien.
+    :parametros
+    :documento es la ruta del archivo que abro
+    :debera devolver la variable diccionario <tipo> diccionario
     """
     fichero = open(documento, 'rb')
     diccionario = pickle.load(fichero)
     fichero.close()
-    #print("ESTE DICCIONARIO TIENE : ", len(fichero), "OBJETOS")
-    print(diccionario.keys())
 
-    #for i in set(diccionario):
-        #print(i, '*'*15)
-        #for a in range(len(diccionario[i])):
-            #print(diccionario[i][a])
-        #print('*'*40)
+    print("ESTE DICCIONARIO TIENE : ", len(diccionario), "OBJETOS")
+
+    for i in set(diccionario):
+        print(i, '*'*15)
+        print(diccionario[i])
+        print('*'*40)
 
     return
 
 def main():
 
-    # inicializo variables
+    # inicializo variables y diccionarios
 
     myruta1 = a + "/DATA/currency.mah"
     poeruta1 = 'http://www.pathofexile.com/item-data/currency'
@@ -275,23 +284,23 @@ def main():
     guardar_diccionario(myruta2, Dweapons)
     imprime_dic(myruta2)
 
-    #Currency_list = abrir_web(poeruta1)
+    Currency_list = abrir_web(poeruta1)
     #print ("numero de lineas leidas ", len(Currency_list))
-    #Dcurrency = nuevo_parser(Currency_list)
-    #guardar_diccionario(myruta1, Dcurrency)
-    #imprime_dic(myruta1)
+    Dcurrency = nuevo_parser(Currency_list)
+    guardar_diccionario(myruta1, Dcurrency)
+    imprime_dic(myruta1)
 
-    #Armour_list = abrir_web(poeruta3)
+    Armour_list = abrir_web(poeruta3)
     #print ("numero de lineas leidas ", len(Armour_list))
-    #Darmour = nuevo_parser(Armour_list)
-    #guardar_diccionario(myruta3, Darmour)
-    #imprime_dic(myruta3)
+    Darmour = nuevo_parser(Armour_list)
+    guardar_diccionario(myruta3, Darmour)
+    imprime_dic(myruta3)
 
-    #Jewelry_list = abrir_web(poeruta4)
+    Jewelry_list = abrir_web(poeruta4)
     #print ("numero de lineas leidas ", len(Jewelry_list))
-    #Djewelry = nuevo_parser(Jewelry_list)
-    #guardar_diccionario(myruta4, Djewelry)
-    #imprime_dic(myruta4)
+    Djewelry = nuevo_parser(Jewelry_list)
+    guardar_diccionario(myruta4, Djewelry)
+    imprime_dic(myruta4)
 
 
 
