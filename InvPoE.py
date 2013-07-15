@@ -17,7 +17,7 @@ import os, sys
 import httplib2
 import re
 import pickle
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 
 a = os.getcwd()
@@ -43,6 +43,13 @@ nueva_lista = []    # lista de uso temporal
 
 linea_inicio = re.compile('<table class="itemDataTable">')
 linea_final = re.compile('</table>')
+
+class menu_window(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(menu_window, self).__init__()
+        uic.loadUi('invpoe_form.ui', self)
+        self.show()
+
 
 
 def abrir_web(documento):
@@ -307,12 +314,6 @@ def main():
     return
 
 main()
-app = QtGui.QGuiApplication(sys.argv)
-
-widget = QtGui.QWindow()
-widget.resize(300,300)
-widget.setTitle('InvPoE')
-
-widget.show()
-
+app = QtWidgets.QApplication(sys.argv)
+window = menu_window()
 sys.exit(app.exec_())
